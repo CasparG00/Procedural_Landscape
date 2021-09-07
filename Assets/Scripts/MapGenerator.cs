@@ -206,7 +206,7 @@ public class MapGenerator : MonoBehaviour
     {
         public string name;
         public float height;
-        public Tile tile;
+        public TileBase tile;
     }
 
     private void OnDrawGizmos()
