@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 3740183}
   - component: {fileID: 3740182}
   m_Layer: 0
-  m_Name: TileGenerator
+  m_Name: Map Generator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,14 +154,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 128
   height: 128
-  borderSize: 8
-  seed: 0
+  borderSize: 16
+  seed: 
   randomizeSeed: 1
-  fillPercent: 0.45
   scale: 10
   octaves: 4
   persistence: 0.5
   lacunarity: 4
+  riverScale: 1.4
+  riverSize: 3
+  tilemap: {fileID: 1363424200}
+  regions:
+  - name: Water
+    height: 0.02
+    tile: {fileID: 11400000, guid: ca563b541001627498f16f05c52909e7, type: 2}
+  - name: Empty
+    height: 0.07
+    tile: {fileID: 0}
+  - name: Trees
+    height: 0.3
+    tile: {fileID: 11400000, guid: 5855f42f12824c044bf35242d25d2801, type: 2}
+  - name: Empty
+    height: 0.47
+    tile: {fileID: 0}
+  - name: Trees
+    height: 0.58
+    tile: {fileID: 11400000, guid: 5855f42f12824c044bf35242d25d2801, type: 2}
+  - name: Rocks
+    height: 1.2
+    tile: {fileID: 11400000, guid: efb266af3611f614db16c68a9aec0c01, type: 2}
+  - name: Dark Rocks
+    height: 10
+    tile: {fileID: 11400000, guid: 45c3fe75cdc7ade4da3277da40cdf0ab, type: 2}
 --- !u!4 &3740183
 Transform:
   m_ObjectHideFlags: 0
@@ -187,6 +211,7 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -202,6 +227,18 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
+--- !u!114 &519420030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92fd9b17267277845a3cf2dc70902d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -212,7 +249,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.12941177, g: 0.12941177, b: 0.12941177, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -229,7 +266,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -253,7 +290,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0.1, y: 54, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -269,6 +306,8 @@ GameObject:
   m_Component:
   - component: {fileID: 637532077}
   - component: {fileID: 637532076}
+  - component: {fileID: 637532079}
+  - component: {fileID: 637532078}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -303,6 +342,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!66 &637532078
+CompositeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637532075}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_GeometryType: 0
+  m_GenerationType: 0
+  m_EdgeRadius: 0
+  m_ColliderPaths:
+  - m_Collider: {fileID: 1363424201}
+    m_ColliderPaths: []
+  m_CompositePaths:
+    m_Paths: []
+  m_VertexDistance: 0.0005
+  m_OffsetDistance: 0.00005
+--- !u!50 &637532079
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637532075}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1363424197
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,6 +398,7 @@ GameObject:
   - component: {fileID: 1363424198}
   - component: {fileID: 1363424200}
   - component: {fileID: 1363424199}
+  - component: {fileID: 1363424201}
   m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
@@ -422,3 +507,19 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!19719996 &1363424201
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363424197}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 1
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0.00001
