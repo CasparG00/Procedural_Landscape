@@ -7,7 +7,8 @@ public class MapGenerator : MonoBehaviour
     [Min(1)] public int width = 64;
     [Min(1)] public int height = 64;
 
-    public int borderSize = 5;
+    public int borderCurve = 4;
+    public float borderOffset = 6;
 
     [Header("Noise Settings")]
     public string seed;
@@ -28,7 +29,6 @@ public class MapGenerator : MonoBehaviour
     public TerrainType[] regions;
 
     private float[,] map;
-    private System.Random pseudoRandom;
 
     private void Start()
     {
@@ -39,6 +39,7 @@ public class MapGenerator : MonoBehaviour
         
         SetMap();
         GenerateMap();
+        GenerateFalloffMap();
         GenerateRivers();
         SetRegions();
         TrimMap();
@@ -47,7 +48,7 @@ public class MapGenerator : MonoBehaviour
     private void SetMap()
     {
         map = new float[width, height];
-        pseudoRandom = new System.Random(seed.GetHashCode());
+        Random.InitState(seed.GetHashCode());
     }
 
     private void GenerateMap()
@@ -56,8 +57,8 @@ public class MapGenerator : MonoBehaviour
         var octaveOffsets = new Vector2[octaves];
         for (var i = 0; i < octaveOffsets.Length; i++)
         {
-            var offsetX = pseudoRandom.Next(-100000, 100000);
-            var offsetY = pseudoRandom.Next(-100000, 100000);
+            var offsetX = Random.Range(-100000, 100000);
+            var offsetY = Random.Range(-100000, 100000);
 
             octaveOffsets[i] = new Vector2(offsetX, offsetY);
         }
@@ -86,7 +87,7 @@ public class MapGenerator : MonoBehaviour
                     amplitude *= persistence;
                     frequency *= lacunarity;
                 }
-
+                
                 //Clamp the values between 0 and 1
                 if (noiseHeight > maxNoiseHeight)
                 {
@@ -98,40 +99,6 @@ public class MapGenerator : MonoBehaviour
                 
                 var sample = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseHeight);
 
-                //Add a border around the edges
-                //by interpolating the edges will be less noticeable
-                if (x < borderSize)
-                {
-                    var t = (float)x / borderSize;
-                
-                    var addition = Mathf.Lerp(1, 0, t);
-                    sample += addition;
-                }
-                
-                if (x > width - borderSize)
-                {
-                    var t = (float)(width - x) / borderSize;
-                
-                    var addition = Mathf.Lerp(1, 0, t);
-                    sample += addition;
-                }
-
-                if (y < borderSize)
-                {
-                    var t = (float)y / borderSize;
-                
-                    var addition = Mathf.Lerp(1, 0, t);
-                    sample += addition;
-                }
-                
-                if (y > height - borderSize)
-                {
-                    var t = (float) (height - y) / borderSize;
-                
-                    var addition = Mathf.Lerp(1, 0, t);
-                    sample += addition;
-                }
-                
                 map[x, y] = sample;
             }
         }
@@ -158,10 +125,26 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    private void GenerateFalloffMap()
+    {
+        for (var x = 0; x < width; x++)
+        {
+            for (var y = 0; y < height; y++)
+            {
+                var falloffX = x / (float) width * 2 - 1;
+                var falloffY = y / (float) height * 2 - 1;
+
+                var value = Mathf.Max(Mathf.Abs(falloffX), Mathf.Abs(falloffY));
+                
+                map[x,y] += Mathf.Pow(value, borderCurve) / (Mathf.Pow(value, borderCurve) + Mathf.Pow(borderOffset - borderOffset * value, borderCurve));
+            }
+        }
+    }
+
     private void GenerateRivers()
     {
-        var offsetX = pseudoRandom.Next(-100000, 100000);
-        var offsetY = pseudoRandom.Next(-100000, 100000);
+        var offsetX = Random.Range(-100000, 100000);
+        var offsetY = Random.Range(-100000, 100000);
         
         for (var x = 0; x < width; x++)
         {
@@ -178,22 +161,6 @@ public class MapGenerator : MonoBehaviour
                 map[x, y] *= perlinValue;
             }
         }
-    }
-
-    private Vector2 QuadraticCurve(Vector2 a, Vector2 b, Vector2 c, float t)
-    {
-        var p0 = Vector2.Lerp(a, b, t);
-        var p1 = Vector2.Lerp(b, c, t);
-        
-        return Vector2.Lerp(p0, p1, t);
-    }
-    
-    private Vector2 CubicCurve(Vector2 a, Vector2 b, Vector2 c, Vector2 d, float t)
-    {
-        var p0 = QuadraticCurve(a, b, c, t);
-        var p1 = QuadraticCurve(b, c, d, t);
-        
-        return Vector2.Lerp(p0, p1, t);
     }
 
     private void TrimMap()
