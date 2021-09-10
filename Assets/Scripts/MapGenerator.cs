@@ -39,8 +39,8 @@ public class MapGenerator : MonoBehaviour
         
         SetMap();
         GenerateMap();
-        GenerateFalloffMap();
-        GenerateRivers();
+        //GenerateFalloffMap();
+        //GenerateRivers();
         SetRegions();
         TrimMap();
     }
@@ -62,6 +62,9 @@ public class MapGenerator : MonoBehaviour
 
             octaveOffsets[i] = new Vector2(offsetX, offsetY);
         }
+        
+        var riverOffsetX = Random.Range(-100000, 100000);
+        var riverOffsetY = Random.Range(-100000, 100000);
 
         var maxNoiseHeight = float.MinValue;
         var minNoiseHeight = float.MaxValue;
@@ -76,18 +79,36 @@ public class MapGenerator : MonoBehaviour
                 var noiseHeight = 0f;
 
                 //Layer noise with octaves
-                for (var i = 0; i < octaves; i++)
-                {
-                    var perlinX = (float) x / width * scale * frequency + octaveOffsets[i].x;
-                    var perlinY = (float) y / height * scale * frequency + octaveOffsets[i].y;
-
-                    var perlinValue = Mathf.PerlinNoise(perlinX, perlinY) * 2 - 1;
-                    noiseHeight += perlinValue * amplitude;
-
-                    amplitude *= persistence;
-                    frequency *= lacunarity;
-                }
+                // for (var i = 0; i < octaves; i++)
+                // {
+                //     var perlinX = (float) x / width * scale * frequency + octaveOffsets[i].x;
+                //     var perlinY = (float) y / height * scale * frequency + octaveOffsets[i].y;
+                //
+                //     var perlinValue = Mathf.PerlinNoise(perlinX, perlinY) * 2 - 1;
+                //     noiseHeight += perlinValue * amplitude;
+                //
+                //     amplitude *= persistence;
+                //     frequency *= lacunarity;
+                // }
                 
+                var riverX = (float) x / width * riverScale + riverOffsetX;
+                var riverY = (float) y / height * riverScale + riverOffsetY;
+
+                var riverValue = Mathf.PerlinNoise(riverX, riverY) * 2 - 1;
+                riverValue = Mathf.Abs(riverValue);
+                // riverValue *= riverSize;
+                riverValue = Mathf.Clamp01(riverValue);
+                riverValue +
+
+                noiseHeight += riverValue;
+                
+                // var falloffX = x / (float) width * 2 - 1;
+                // var falloffY = y / (float) height * 2 - 1;
+                //
+                // var value = Mathf.Max(Mathf.Abs(falloffX), Mathf.Abs(falloffY));
+                //
+                // noiseHeight += Mathf.Pow(value, borderCurve) / (Mathf.Pow(value, borderCurve) + Mathf.Pow(borderOffset - borderOffset * value, borderCurve));
+
                 //Clamp the values between 0 and 1
                 if (noiseHeight > maxNoiseHeight)
                 {

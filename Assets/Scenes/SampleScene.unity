@@ -152,15 +152,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d8c9c86958859c4682727d46a3001d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 128
-  height: 128
+  width: 256
+  height: 256
   borderCurve: 2
-  borderOffset: 6
+  borderOffset: 3
   seed: 
   randomizeSeed: 1
-  scale: 10
+  scale: 2
   octaves: 4
-  persistence: 0.5
+  persistence: 0.6
   lacunarity: 4
   riverScale: 1
   riverSize: 3
@@ -179,13 +179,13 @@ MonoBehaviour:
     height: 0.44
     tile: {fileID: 0}
   - name: Trees
-    height: 0.55
+    height: 0.5
     tile: {fileID: 11400000, guid: 5855f42f12824c044bf35242d25d2801, type: 2}
   - name: Rocks
-    height: 0.8
+    height: 0.7
     tile: {fileID: 11400000, guid: efb266af3611f614db16c68a9aec0c01, type: 2}
   - name: Dark Rocks
-    height: 10
+    height: 1
     tile: {fileID: 11400000, guid: 45c3fe75cdc7ade4da3277da40cdf0ab, type: 2}
 --- !u!4 &3740183
 Transform:
